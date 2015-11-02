@@ -12,11 +12,7 @@ angular.module "Popup", ["ngResource"]
 
 .controller "Popup", ["$scope", "$resource", ($scope, $resource) ->
   $ = $scope
-  save_patterns = -> storage.set patterns: $.patterns
-
   _.extend $,
-#    host: "http://46.101.147.174"
-    host: "http://localhost:8000"
     parsed: []
     patterns: {}
 
@@ -51,18 +47,28 @@ angular.module "Popup", ["ngResource"]
     remove: (i) -> $.parsed.splice i, 1
 
     load: ->
+      save_storage "host", $.host
       return alert "Не укзан каталог" unless ($.catalog and $.catalog.id)
+      return alert "Введите пароль" unless $.password
+      save_storage "password", $.password
+
       _.each $.parsed, (item) ->
         (new Product _.extend {}, item, {parent: $.catalog.id, password: $.password})
         .$save().then ->
           $.parsed.splice (_.indexOf item), 1
 
+  save_storage = (k, v) -> storage.set "#{k}": v
+  save_patterns = -> save_storage "patterns", $.patterns
 
-  Catalog = $resource "#{$.host}/api/catalog/catalog/:id", null, null, stripTrailingSlashes: off
-  Product = $resource "#{$.host}/api/catalog/product/", null, null, stripTrailingSlashes: off
-  $.catalogs = Catalog.query()
-
+  Catalog = Product = null
   storage.get "patterns", (items) -> $.$apply -> $.patterns = items.patterns or []
+  storage.get "password", (v) -> $.$apply -> $.password = v.password
+  storage.get "host", (v) -> $.$apply ->
+    $.host = v.host
+    Catalog = $resource "#{$.host}/api/catalog/catalog/:id", null, null, stripTrailingSlashes: off
+    Product = $resource "#{$.host}/api/catalog/product/", null, null, stripTrailingSlashes: off
+    $.catalogs = Catalog.query()
+
 ]
 
 .filter "save", ["$sce", ($sce) -> (v) -> $sce.trustAsHtml v]

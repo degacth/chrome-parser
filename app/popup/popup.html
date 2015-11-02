@@ -45,7 +45,7 @@
         <div class="uk-margin-top">
             <input type="text" class="uk-width-1-3" ng-model="host" />
             <select class="uk-width-1-3" ng-options="catalog as catalog.title for catalog in catalogs|catalog_tree" ng-model="catalog"></select>
-            <input type="password" class="uk-width-1-4">
+            <input type="password" class="uk-width-1-4" ng-model="password">
         </div>
 
         <textarea class="uk-width-1-1 uk-margin-top uk-margin-bottom" ng-model="parse_config" rows="10"></textarea>
