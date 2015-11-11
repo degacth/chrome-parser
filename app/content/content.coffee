@@ -6,9 +6,11 @@ chrome.runtime.onMessage.addListener (req, sender, send_response) ->
   site_name = "#{location.protocol}//#{location.host}"
 
   $(req.context).each ->
+    src = $(req.image, @).attr("src")
+    unless src.startsWith("http") then src = "#{site_name}/#{_.trimLeft src, "/"}"
     response.push
       title: $(req.title, @).text()
-      image: "#{site_name}/#{_.trimLeft $(req.image, @).attr("src"), "/"}"
+      image: src
       info: $(req.info, @).html()
       price: $(req.price, @).text()
       short: $(req.short, @).html()
