@@ -15,5 +15,6 @@ chrome.runtime.onMessage.addListener (req, sender, send_response) ->
       price: $(req.price, @).text()
       short: $(req.short, @).html()
       parse_url: location.href
+      link: $(req.link, @).attr "href"
 
   send_response response
